@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Economics: Part 2 - Leisure-Work Dynamic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            color: #334155; /* Dark slate text */
+            line-height: 1.6;
+        }
+        .article-body {
+            max-width: 800px; /* Optimal width for reading */
+            margin: 0 auto; /* Center the article content */
+            background-color: #ffffff;
+            padding: 2rem 2.5rem; /* More padding for article text */
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .article-body h1, .article-body h2, .article-body h3, .article-body h4 {
+            color: #1e293b;
+            margin-top: 1.5em;
+            margin-bottom: 0.75em;
+            line-height: 1.3;
+        }
+        .article-body h1 {
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 800; /* extrabold */
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .article-body h2 {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* bold */
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.3rem;
+        }
+        .article-body h3 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700; /* bold */
+        }
+         .article-body h4 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 700; /* bold */
+        }
+        .article-body p {
+            margin-bottom: 1em;
+            text-align: justify;
+        }
+        .article-body ul, .article-body ol {
+            margin-bottom: 1em;
+            padding-left: 1.5em;
+        }
+        .article-body li {
+            margin-bottom: 0.5em;
+        }
+        .article-body strong {
+            font-weight: 600; /* semibold or bold */
+        }
+        .article-body em {
+            font-style: italic;
+        }
+        .article-body .text-center { /* Utility for centering specific paragraphs if needed */
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 450px; /* Increased height to give more space */
+            width: 100%;
+            max-width: 700px;
+            margin: 2.5rem auto; 
+            background-color: #ffffff; 
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem; /* Adjusted padding */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .chart-container h2 { /* Chart titles within containers */
+            font-size: 1.15rem; /* Slightly reduced to save space if needed */
+            color: #000000; 
+            font-weight: 700;
+            margin-bottom: 0.75rem; /* Reduced margin */
+            text-align: center;
+            border-bottom: none; 
+        }
+
+        .formula-section {
+            background-color: #f9fafb; 
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin: 2.5rem auto;
+            max-width: 700px;
+            text-align: center;
+        }
+        .formula-section .section-title {
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .formula-section h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #334155;
+            margin-top: 1rem; 
+            margin-bottom: 0.5rem;
+        }
+        .formula-section .formula {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #e5e7eb;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            margin-bottom: 0.75rem;
+            display: inline-block;
+            color: #111827;
+            font-weight: 700;
+        }
+        .formula-section .formula-description,
+        .formula-section .formula-note {
+            font-size: 0.875rem;
+            color: #4b5563;
+            margin-bottom: 1rem;
+            font-weight: 700; 
+        }
+        .formula-section .formula-note {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        .table-container {
+            margin: 2rem auto;
+            max-width: 700px;
+            overflow-x: auto; 
+        }
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .styled-table th, .styled-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+        .styled-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #334155;
+        }
+        .styled-table tbody tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+    <article class="article-body">
+        <h1>Brain Economics: The Economic Value of a Flourishing Mind - Part 2: The Leisure-Work Dynamic</h1>
+
+        <p>In our preceding discussion, we established that human well-being is not a mere footnote in the economic ledger but a fundamental determinant of productivity and prosperity. Shifting our gaze from this foundational principle, we now dissect a core concept in economics: the allocation of our finite time between the pursuit of material gain through work and the necessity of recuperation and personal life, which economists, perhaps a touch too clinically, term 'leisure'. This choice, traditionally modeled as a straightforward trade-off, is significantly more complex when viewed through the prism of mental states.</p>
+        <p>The conventional economic model of work-leisure choice offers a robust and valuable framework; however, its assumptions of stable preferences and universally rational actors limit its capacity to capture the nuanced realities introduced by psychological factors. This report aims to dissect this traditional model, subsequently enriching it by systematically examining how prevalent wellness factors—specifically Stress, Depression, and Attention-Deficit/Hyperactivity Disorder (ADHD)—modulate an individual's utility and decision-making processes. This integrated approach moves beyond simplistic assumptions, incorporating mathematical interpretations and graphical concepts to provide a more holistic understanding. The core premise of behavioral economics, which posits that actual human behavior often deviates predictably from purely rational models due to psychological influences, underscores the imperative for such an integration. The "rational actor" of classical economics, while a useful simplification, operates within bounds defined by, and is systematically influenced by, these internal mental states. These states are not mere random noise but act as predictable modulators of economic choice. Consequently, policy interventions derived solely from traditional models, such as wage subsidies aimed at increasing labor supply, may prove inefficient or even counterproductive if they fail to account for the wellness landscape of the target population. For instance, in a population experiencing high levels of stress, incentives related to leisure or improvements in working conditions might be more effective in enhancing productivity and participation than wage increases alone.</p>
+
+        <h2>The Conventional Framework: The Traditional Work-Leisure Trade-Off</h2>
+        
+        <h4>A. Foundational Principles: Utility, Opportunity Cost, and Rational Choice</h4>
+        <p>The traditional economic model of labor supply is built upon the concept of utility, which represents the satisfaction or well-being an individual derives from consuming goods and services, including leisure. Leisure, in this context, is any time not spent in paid work. Individuals face an inherent trade-off: working more hours generates more income, which can be used to purchase goods and services, but it reduces available leisure time. Conversely, choosing more leisure means forgoing potential income. The opportunity cost of leisure is the income that could have been earned by working instead, while the opportunity cost of working is the value of the leisure time sacrificed. The model assumes that individuals are rational agents who aim to maximize their total utility given the constraints they face, primarily their available time and the prevailing wage rate.</p>
+        
+        <!-- Visualization 1: Traditional Work-Leisure Model -->
+        <div class="chart-container">
+            <h2 class="text-xl">Traditional Work-Leisure Model (Marginal Benefits)</h2>
+            <canvas id="marginalBenefitChart"></canvas>
+        </div>
+
+        <h4>B. The Budget Constraint and Indifference Curves in Leisure-Income Space</h4>
+        <p>This trade-off is graphically represented using a budget constraint and indifference curves in a two-dimensional space with income (or consumption) on one axis and leisure hours on the other.</p>
+        <p><strong>The Budget Constraint:</strong> The budget constraint illustrates all possible combinations of income and leisure that an individual can attain given their total available time (e.g., 24 hours a day), the market wage rate, and any non-labor income they might have. Mathematically, if C represents consumption (funded by income), w is the hourly wage rate, T is the total time available, L is hours of leisure, and V is non-labor income, the budget constraint can be expressed as: C = w(T−L) + V. This can be rewritten as C + wL = wT + V, where wT + V is the individual's "full income"—the maximum income achievable if all available time were devoted to work. The slope of the budget constraint is −w, indicating that to gain one more hour of leisure, an individual must forgo w amount of income.</p>
+        <p><strong>Indifference Curves:</strong> Indifference curves map an individual's preferences, with each curve representing combinations of income and leisure that provide the same level of utility or satisfaction. These curves possess distinct properties:</p>
+        <ul>
+            <li>They are downward sloping: To maintain the same utility level, if leisure increases, income must decrease, and vice versa.</li>
+            <li>They are convex to the origin: This reflects the diminishing marginal rate of substitution (MRS) between leisure and income. As an individual has more leisure, they are willing to give up progressively less income to obtain an additional unit of leisure.</li>
+            <li>Higher indifference curves represent higher levels of utility: Individuals prefer more of both goods (income and leisure) to less.</li>
+            <li>Indifference curves do not intersect for a given individual, as this would imply a logical inconsistency in preferences.</li>
+        </ul>
+        <p>The absolute slope of an indifference curve at any point is the Marginal Rate of Substitution of leisure for income (MRS<sub>L,C</sub>). It quantifies the amount of income an individual is willing to sacrifice for one additional unit of leisure while remaining equally satisfied.</p>
+
+        <!-- Visualization 2: Work-Leisure Budget Constraints -->
+        <div class="chart-container">
+            <h2 class="text-xl">Work-Leisure Budget Constraints by Income Level</h2>
+            <canvas id="budgetConstraintChart"></canvas>
+        </div>
+
+        <h4>C. The Optimal Choice: Tangency and Utility Maximization</h4>
+        <p>An individual achieves their optimal, utility-maximizing combination of work and leisure at the point where their budget constraint is tangent to the highest attainable indifference curve. At this tangency point, the slope of the indifference curve (MRS<sub>L,C</sub>) is equal to the slope of the budget constraint (w):</p>
+        <p class="formula-description text-center">MRS<sub>L,C</sub> = (∂U/∂L) / (∂U/∂C) = w</p>
+        <p>Here, ∂U/∂L is the marginal utility of leisure, and ∂U/∂C is the marginal utility of consumption (or income). This condition implies that the individual allocates their time such that their subjective valuation of the last hour of leisure (in terms of income they are willing to forgo) is exactly equal to its market price (the wage rate they would earn by working that hour).</p>
+
+        <h4>D. Income and Substitution Effects of Wage Changes</h4>
+        <p>When the wage rate changes, two distinct effects influence an individual's choice between work and leisure:</p>
+        <ul>
+            <li><strong>Substitution Effect:</strong> An increase in the wage rate makes leisure relatively more expensive because the opportunity cost of taking leisure (foregone earnings) rises. Consequently, individuals tend to substitute work for leisure, leading to an increase in hours worked and a decrease in leisure time. The substitution effect of a wage increase always pushes towards more work.</li>
+            <li><strong>Income Effect:</strong> A higher wage rate also means that for any given number of hours worked, the individual earns more income. If leisure is a normal good (meaning individuals demand more of it as their income increases), this increase in real income will lead them to "purchase" more leisure, thereby reducing work hours. The income effect of a wage increase (assuming leisure is a normal good) pushes towards less work.</li>
+        </ul>
+        <p>The net impact of a wage change on the quantity of labor supplied depends on the relative magnitudes of these two opposing effects. If the substitution effect dominates the income effect, a wage increase leads to more hours worked (an upward-sloping labor supply curve). If the income effect dominates, a wage increase leads to fewer hours worked (a backward-bending labor supply curve). It is also possible for the two effects to exactly offset each other, resulting in a vertical labor supply curve over a certain wage range.</p>
+        <p>The assumption that leisure is a "normal good" is pivotal for the income effect's direction. While generally accepted, the degree to which leisure acts as a normal good can be influenced by an individual's psychological state. For instance, an individual experiencing severe depression might not derive increased utility from additional leisure even if their income rises, thereby weakening the income effect and altering the expected shape of their labor supply curve. Furthermore, the traditional model often presents a static snapshot. However, preferences and attitudes towards work and leisure can evolve. These "attitudes" are not necessarily exogenous shocks but can be endogenously influenced by factors such as cumulative stress, recovery from burnout, or changes in mental health status. This suggests that an individual's optimal work-leisure point is not fixed but can shift over time, highlighting the need for dynamic analysis when incorporating wellness factors. Policies based on static models might, therefore, misjudge long-term labor supply responses if they do not account for these evolving internal states.</p>
+
+        <h2>The Influence of the Mind: Integrating Wellness Factors into Economic Decisions</h2>
+        <p>The traditional work-leisure model provides a crucial baseline for understanding labor supply decisions. However, its inherent assumptions often overlook the significant influence of internal psychological states on individual preferences and perceived constraints. "Brain Economics" posits that mental wellness is not a peripheral concern but a central determinant of economic behavior, including the fundamental choice between work and leisure. Behavioral economics has consistently demonstrated that real-world decisions systematically deviate from the predictions of purely "rational" models, largely due to cognitive and emotional factors that shape human judgment and choice. This section serves as a bridge, transitioning from the classical economic framework to one that incorporates these vital psychological dimensions.</p>
+        <p>To capture this complexity, the economist's concept of a utility function, traditionally U(W,L) where W represents wealth or consumption enabled by wages and L represents leisure, must be expanded. A more realistic utility function would incorporate a range of broader cognitive and wellness domains that collectively represent an individual's "mental flourishing." Let's define these as:</p>
+        <ul>
+            <li><strong>Cognitive Capacity (C):</strong> An individual's ability to focus, concentrate, remember, make decisions, solve problems, and process information.</li>
+            <li><strong>Emotional Regulation (E):</strong> An individual's ability to manage emotions, cope with stress, maintain mood stability, and experience pleasure.</li>
+            <li><strong>Motivation & Drive (M):</strong> An individual's energy levels, initiative, engagement, sense of purpose, and willingness to exert effort.</li>
+            <li><strong>Physical Vitality (P):</strong> The underlying physical health, including sleep quality and energy levels, that directly impacts cognitive and emotional functioning.</li>
+        </ul>
+        <p>The expanded utility function can then be conceptualized as being state-dependent:</p>
+        <p class="formula-description text-center">U(W, L, C, E, M, P)</p>
+        <p>This acknowledges that the satisfaction derived from consumption (W) and leisure (L) is not fixed but varies with an individual's state across these fundamental wellness domains. This reconceptualization has profound implications for economic modeling and policy, suggesting that interventions targeting these domains (i.e., improving mental wellness) could have significant economic impacts by altering work-leisure choices and overall productivity. Such a framework moves economic analysis towards a more personalized and context-aware understanding, acknowledging that individuals will exhibit heterogeneous responses to economic incentives based on their underlying mental wellness.</p>
+        <p>This report will examine three specific wellness “states”—Stress, Depression, and Attention-Deficit/Hyperactivity Disorder (ADHD)— and their effects on work-leisure dynamics.</p>
+
+        <h3>Stress and the Shifting Value of Leisure</h3>
+        <h4>A. The Nature of Stress and Its Economic Relevance</h4>
+        <p>Stress is a complex psychophysiological response to perceived demands or threats that can deplete cognitive resources, impair decision-making capabilities, and negatively affect overall well-being. Elevated stress levels can lead individuals to make choices that are not in their long-term best interest but provide temporary relief from their immediate stressors. The standard rational choice model often assumes stable preferences, but stress can introduce a source of high variability to individual preferences, impacting how these individuals evaluate trade-offs in stressful environments. It is important to note that an optimal amount of stress can actually improve performance, but for the purposes of our report we will restrain our considerations to the effects of excessive (pathologic) stress.</p>
+        
+        <h4>B. Leisure as a Stress Coping Mechanism</h4>
+        <p>Leisure time and fulfilling, non-work activities serve as a critical resource for coping with stress, especially work related stress. Engaging in enjoyable leisure can lead to reduced stress levels, improved mood, lower heart rates, and increased psychological engagement while counteracting boredom and reducing engagement in unhealthy behaviors. A key element in this process is "psychological detachment" from work during non-work time, which allows for the replenishment of energetic resources depleted by work demands. Studies indicate that individuals experiencing high daily stress may be prompted to allocate more time to leisure, which subsequently increases positive mood, partially mitigating the negative impact of stress. The nature of the leisure activity is also important; mentally engaging pursuits can be particularly effective in disrupting rumination—a core driver of stress—by preoccupying the brain with engaging activities, allowing for a mental "reset" as the difficult emotions that accompany stress are at least temporarily suppressed.</p>
+
+        <h4>C. The Stress-Leisure Utility Curve: A U-Shaped Relationship</h4>
+        <p>Stress manifests in myriad ways, though in our report we simplify this complexity to assume stress primarily impacts an individual's Emotional Regulation (E) at first, leading to heightened anxiety and irritability, which in turn can diminish Cognitive Capacity (C), impairing focus and memory. Chronically elevated stress also depletes Physical Vitality (P) and motivation (M). These impacts, in turn, modulate the utility derived from leisure, simultaneously increasing the need for yet reducing the benefit from leisure pursuits.</p>
+        <p>The marginal utility derived from leisure, particularly in the context of managing stress, is unlikely to be linear. Instead, it can be conceptualized as following a U-shaped pattern when plotting the marginal utility of leisure against the quantity or quality of leisure consumed while under stress.</p>
+        <ul>
+            <li><strong>Initial Phase (Downward Slope/Shallow):</strong> When an individual is experiencing high or accumulating stress, the initial small increments of leisure may offer minimal perceived relief. The individual might still be preoccupied with stressors, or the leisure itself may be of low quality or insufficient duration to facilitate genuine psychological detachment. In this phase, the utility gain from an additional unit of leisure is modest, and in some cases, if the leisure time is unstructured or exacerbates existing negative thought patterns, its marginal utility may become slightly negative (though in this instance the net negative effect would be less than from engaging in high stress activities like work).</li>
+            <li><strong>Turning Point:</strong> A threshold exists where, as leisure time increases, its quality improves (e.g., through participation in genuinely restorative and engaging activities), or the mental state of the individual improves, its effectiveness as a stress antidote begins to rise significantly.</li>
+            <li><strong>Rising Phase (Upward Slope/Steep):</strong> Beyond this turning point, additional units of leisure yield sharply increasing marginal utility. Leisure becomes highly effective in reducing stress, improving mood, and replenishing cognitive and emotional resources. The individual experiences substantial psychological benefits, rendering further leisure highly valuable.</li>
+        </ul>
+        <p>This dynamic suggests a U-shaped curve for the utility of leisure when plotted against stress levels. Initially, as stress moves from very low to an optimal, motivating level, the marginal utility of leisure might decrease slightly or remain stable. But as stress crosses a threshold and becomes excessive, the marginal utility derived from leisure (especially restorative leisure) rises sharply. Leisure then becomes crucial for psychological detachment, stress reduction, and the replenishment of cognitive and emotional resources. While direct empirical evidence for a "U-shaped stress-leisure utility curve" is an area for further research, the concept aligns with observations that high stress can motivate increased leisure allocation for recovery, and that the type of leisure influences its restorative power. The U-shape describes how the utility derived from leisure itself changes under stress, which in turn influences the individual's overall indifference map.</p>
+        
+        <!-- Visualization 3: Stress-Leisure Utility Curve -->
+        <div class="chart-container">
+            <h2 class="text-xl">Stress-Leisure Utility Curve</h2>
+            <canvas id="stressLeisureChart"></canvas>
+        </div>
+
+        <p>This can be expressed conceptually in terms of how stress affects the desire for leisure through its impact on performance (Y):</p>
+        <p class="formula-description text-center">If dY/dStress > 0 then dL/dStress &lt; 0</p>
+        <p class="formula-description text-center">If dY/dStress &lt; 0 then dL/dStress > 0</p>
+        <p>In other words, if performance (Y) increases with stress, then the desire or need for leisure will theoretically decrease or maintain a stable level as stress currently optimizes performance. When performance begins to decrease with increasing levels of stress, the desire/need for leisure will increase to counteract the negative impact of stress.</p>
+
+        <h4>D. Implications for Optimal Leisure Allocation</h4>
+        <p>Individuals experiencing high levels of stress might rationally choose to allocate significantly more time to leisure than predicted by traditional economic models, especially if they accurately perceive this U-shaped utility function. The "cost" of not engaging in sufficient, high-quality leisure can be substantial, manifesting as chronic stress, burnout, and diminished well-being. The U-shape implies that it is not just the quantity of leisure hours that matters, but also its quality and effectiveness in promoting recovery. Passive leisure might keep an individual on the shallower, less effective part of the U-curve, whereas active, engaging leisure can allow them to enjoy the stress reducing benefits. This introduces a qualitative dimension to the leisure variable (L) in the utility function U(C,L). Consequently, high stress can effectively steepen an individual's indifference curves for leisure, indicating a greater willingness to forgo income for an additional unit of effective leisure. This would lead to a higher optimal quantity of leisure (L*) for a stressed individual compared to a non-stressed one, even at the same wage rate. Workplace wellness programs that not only permit time off but also encourage or facilitate high-quality, detaching leisure activities could therefore be more effective in boosting overall productivity and well-being than interventions focused solely on work hours or wages.</p>
+
+        <h3>Depression and the Attenuation of Work Utility</h3>
+        <h4>A. Understanding Depression in the Economic Context</h4>
+        <p>Clinical depression is a mood disorder characterized by a persistent loss of interest or pleasure in activities (anhedonia), fatigue, difficulty concentrating, feelings of worthlessness, and changes in sleep and appetite. It is a prevalent condition with substantial economic consequences, including significant costs arising from lost productivity, absenteeism, increased healthcare utilization, and direct treatment expenses. Depression often affects individuals during their prime working years and can have long-lasting impacts on their labor market outcomes.</p>
+
+        <h4>B. The Impact of Depression on Work-Related Cognition and Motivation</h4>
+        <p>Depression directly undermines an individual's capacity to work effectively by impairing crucial cognitive functions and diminishing motivation. Symptoms such as reduced energy levels, difficulty concentrating, memory problems, and impaired decision-making capabilities directly translate into reduced work performance and output. Furthermore, depression is associated with increased rates of presenteeism—being physically present at work but functioning at a suboptimal level—and absenteeism, where individuals are unable to attend work altogether. These effects contribute to substantial productivity losses for both employees and employers.</p>
+
+        <h4>C. The Depression-Work Utility Relationship: Diminishing Marginal Utility of Work</h4>
+        <p>Depression profoundly impacts an individual's Motivation & Drive (M) (anhedonia, fatigue, lack of purpose), significantly impairs Emotional Regulation (E) (persistent sadness, hopelessness), and compromises Cognitive Capacity (C) (concentration, decision-making). It also affects Physical Vitality (P) (sleep disturbances, energy levels). These combined effects reduce the non-economic utility of work as the little positive experiences associated with work are inadequate to compensate for a persistent negative mental state.</p>
+        <p>As the severity of depressive symptoms increases, the marginal utility—the additional satisfaction, sense of accomplishment, or perceived reward—obtained from an additional unit of work (such as an hour worked or a task completed) progressively decreases. This phenomenon is driven by several aspects of depression:</p>
+        <ul>
+            <li><strong>Anhedonia:</strong> The diminished capacity to experience pleasure directly reduces any positive feelings or rewards that might normally be associated with work activities or achievements.</li>
+            <li><strong>Cognitive Impairments:</strong> Difficulties with concentration and decision-making can make work tasks feel more arduous and less intrinsically rewarding, thereby lowering the perceived utility of effort.</li>
+            <li><strong>Feelings of Worthlessness:</strong> If an individual feels worthless or hopeless, any external validation or sense of achievement from work may be negated or significantly blunted. This can further exacerbate deficits related to cognitive impairments, contributing to a loss of confidence in one’s abilities (self-efficacy) and difficulty tackling complex tasks.</li>
+        </ul>
+        <p>While the law of diminishing marginal utility is typically applied to the consumption of goods, the concept can be extended to the "consumption" of work-related “goods” like income, achievement, and social interaction. Depression acts as a potent factor that can drastically alter typical consumption patterns in this context and substantially lower the baseline level of utility derived from work. The reduced work performance and productivity observed in individuals with depression are tangible manifestations of this diminished utility and capacity. For example, individuals may begin to self-isolate, reducing the number of positive interactions they have in the workplace, minimizing their ability to progress professionally. Conversely, another individual may lean into their social support at work, spending more time discussing persistent personal challenges with colleagues at the expense of their work and the work of those they engage with.</p>
+        <p>Let Ψ (Psi) represent an individual's mental health status, specifically the severity of depression in this context (where a higher Ψ indicates worsening depression). The utility or value derived from a given wage or work effort, W, can be seen as a function of this mental state, denoted as W(Ψ). The relationship indicating that the marginal utility of work declines as depression worsens can be expressed by the formulation:</p>
+        <p class="formula-description text-center">dW/dΨ &lt; 0</p>
+        <p>In this specific context, this notation is interpreted to mean that as the severity of depression (Ψ) increases (worsens), the perceived marginal utility derived from work (or the wage, W) declines. Graphically, one can imagine the purpose-driven utility or intrinsic satisfaction from work as a downward-sloping curve as mental health challenges (like increasing severity of depression) increase. This contrasts with the often-assumed constant utility derived purely from the monetary wage, which might be depicted as a flat line. For an individual with severe depression, even a high wage might yield little positive utility beyond securing income if anhedonia is profound. This has significant implications for labor supply, as financial incentives alone may be insufficient to motivate work effort when the capacity to derive satisfaction from work is impaired.</p>
+
+        <!-- Visualization 4: Depression-Work Utility Curve -->
+        <div class="chart-container">
+            <h2 class="text-xl">Depression-Work Utility Curve</h2>
+            <canvas id="depressionWorkChart"></canvas>
+        </div>
+
+        <h4>D. Consequences for Labor Supply and Economic Well-being</h4>
+        <p>The reduced utility of work due to depression has significant consequences for labor supply and overall economic well-being. Individuals may exhibit a reduced desire to work, leading to lower work hours, disengagement from their jobs, or even complete withdrawal from the labor force. Studies have shown that depression is linked to adverse labor market outcomes, including increased unemployment, greater reliance on social welfare, and reduced earnings potential. Even when individuals with depression remain employed, their productivity, engagement, and job satisfaction are likely to be compromised, reflecting the diminished utility they derive from their work.</p>
+        <p>Depression effectively imposes a psychological "tax" on the utility derived from work; for any given level of effort or achievement, the net satisfaction experienced by a depressed individual is lower. This implies that, to elicit the same output as a non-depressed individual, a person with depression might require a significantly higher wage rate, or they might not respond to wage incentives at all in severe instances. The situation is further complicated because depression often reduces the utility derived from leisure as well, due to pervasive anhedonia. If neither work nor leisure provides significant positive utility, the traditional work-leisure choice framework, which assumes maximization between two desirable goods, may break down. Decision-making might shift towards minimizing disutility and discomfort or result in apathy and withdrawal, outcomes not well-captured by standard models. Therefore, policies focused solely on "activating" individuals with depression into work through incentives or sanctions are likely to be ineffective without concurrently addressing the underlying depressive illness. Treatment and support aimed at restoring the capacity to derive utility from life's activities, including work, are paramount for improving both individual well-being and economic outcomes.</p>
+
+        <h3>ADHD: Navigating Oscillating Work Utility and Frustration Thresholds</h3>
+        <h4>A. ADHD in the Workplace: Core Characteristics and Challenges</h4>
+        <p>Attention-Deficit/Hyperactivity Disorder (ADHD) in adults is characterized by a core set of symptoms that significantly affect workplace performance. These include distractibility, difficulty prioritizing tasks, and ineffective time management, which often lead to poor work output or the inability to meet deadlines. Emotional dysregulation and a tendency to frequently interrupt others can also contribute to conflicts with coworkers or diminish the cultivation of a strong professional network, impacting team dynamics and professional development.</p>
+
+        <h4>B. The ADHD-Work Utility Curve: An Oscillating Pattern</h4>
+        <p>ADHD primarily impacts an individual's Cognitive Capacity (C), affecting attention, focus, and executive functions. This can indirectly affect Motivation & Drive (M) (e.g., frustration from uncompleted tasks) and Emotional Regulation (E) (e.g., emotional dysregulation). These effects lead to a unique oscillating pattern in the utility derived from work.</p>
+        <p>The utility derived from work by an individual with ADHD is often not stable but exhibits an oscillating pattern, heavily influenced by the nature of the task, the work environment, and the individual's internal state:</p>
+        <ul>
+            <li><strong>Hyperfocus Peaks:</strong> When engaged in tasks that capture their interest, offer novelty, or present an engaging challenge, individuals with ADHD can enter a state of hyperfocus. During these periods, they may demonstrate intense concentration, high levels of productivity, and derive exceptionally high marginal utility from their work. The work itself becomes highly rewarding, leading to significant satisfaction and a sense of accomplishment.</li>
+            <li><strong>Distraction Troughs:</strong> Conversely, when faced with tasks perceived as boring, repetitive, overly complex without clear structure, or overwhelming, individuals with ADHD are prone to inattention, distractibility, and procrastination. During these periods, the marginal utility of work can plummet, potentially becoming very low or even negative, leading to feelings of frustration, underachievement, and task avoidance.</li>
+            <li><strong>Oscillation:</strong> This dynamic interplay results in a work utility curve that oscillates between these peaks of high utility (driven by hyperfocus) and troughs of low utility (driven by distraction and boredom). This variability is a hallmark of the ADHD experience in the workplace and is consistent with underlying differences in neural oscillations and cognitive states that affect task engagement and performance.</li>
+        </ul>
+
+        <h4>C. The Constant Wage Line and the "Frustration Threshold"</h4>
+        <p>In most employment situations, the nominal wage rate per hour remains constant, regardless of the task being performed. This can be represented as a constant wage line on a utility graph. However, for individuals with ADHD, this constant external reward may interact uniquely with their fluctuating internal utility.</p>
+        <p>Individuals with ADHD may also experience a lower frustration tolerance, particularly when tasks are not stimulating, when they feel blocked, or when executive function demands are high. A "frustration threshold" can be conceptualized as the point at which the perceived effort, mental discomfort, or negative utility associated with continuing a task (due to boredom, distraction, difficulty initiating, or feeling overwhelmed) becomes unbearable. When this threshold is reached, the individual may disengage from the task, switch activities impulsively, or experience significant emotional distress, even if the objective wage (the external reward for continuing) remains unchanged and notionally positive. The internal cost of sustaining effort effectively skyrockets, overriding the motivation provided by the wage alone.</p>
+        
+        <!-- Visualization 5: ADHD-Work Utility Curve -->
+        <div class="chart-container">
+            <h2 class="text-xl">ADHD-Work Utility Curve</h2>
+            <canvas id="adhdWorkChart"></canvas>
+        </div>
+
+        <h4>D. Implications for Work Performance and Job Design</h4>
+        <p>The oscillating nature of work utility and the concept of a frustration threshold have significant implications for the work performance of individuals with ADHD and for the design of jobs and work environments. Sustained productivity often requires strategies and environments that leverage the potential for hyperfocus while mitigating common ADHD-related challenges. This includes structuring tasks to be more engaging, providing clear goals and immediate feedback, incorporating novelty, and minimizing distractions. Effective time management techniques, organizational systems, and strategies for managing impulsivity are also crucial. The "fit" between an individual's ADHD profile and the demands and characteristics of their job is a critical determinant of their ability to maximize utility from work and perform effectively.</p>
+        <p>While the nominal wage rate is constant, the effective wage rate—the output or reward per unit of perceived effort—can fluctuate dramatically for an individual with ADHD. During hyperfocus, perceived effort might be low and output high, making the effective wage feel very high and the work highly satisfying. Conversely, during periods of distraction or when struggling with a mundane task, perceived effort can be extremely high and output low, causing the effective wage to feel very low and the work aversive. This internal, subjective valuation of the wage changes dramatically based on task engagement. Consequently, non-monetary aspects of work, such as task interest, autonomy, variety, clear feedback mechanisms, and a sense of purpose, often become disproportionately important for individuals with ADHD compared to neurotypical individuals who might more consistently sustain effort for monetary rewards alone. The constant monetary wage line might be a less potent motivator than the intrinsic properties of the task itself. For employers, this suggests that focusing solely on financial incentives may be insufficient for optimizing the performance and job satisfaction of employees with ADHD. Job crafting, providing stimulating and varied tasks, minimizing unnecessary distractions, offering clear structures, and allowing for flexible work arrangements that accommodate periods of hyperfocus and help manage frustration could yield significantly higher overall productivity and well-being than rigid, one-size-fits-all approaches.</p>
+        <p>Importantly, the need for strategic job crafting extends beyond cases of ADHD. Rapid advances in the field of artificial intelligence (AI) hold the potential to dramatically increase productivity and output, especially in administrative and knowledge based roles. However, scientific literature on human flourishing continues to emphasize the importance of meaning making , a factor ostensibly absent from purely market based analyses. Overemphasizing output and productivity metrics may have unforeseen consequences on the collective wellbeing of the workforce and warrants careful considerations.</p>
+
+        <h2>A Mathematical Glimpse: Formulating Wellness in Economic Choice</h2>
+        <h4>A. Introducing the Concept: Ψ as an Index of Flourishing</h4>
+        <p>To formalize the interplay between economic variables and mental well-being, let Ψ (Psi) represent a composite index or a specific dimension of an individual's mental flourishing. This could encompass factors such as high levels of Cognitive Capacity (C), strong Emotional Regulation (E), robust Motivation & Drive (M), and optimal Physical Vitality (P). Ψ is conceptualized as a stock variable, reflecting an individual's psychological state at one point in time. Let W represent the wage rate, a key economic variable influencing work-leisure decisions.</p>
+        
+        <h4>B. The Formulation: dW/dΨ &lt; 0</h4>
+        <p>The inequality dW/dΨ &lt; 0 proposes a specific relationship: under certain conditions or beyond a particular threshold, an increase in the wage rate (dW > 0) can lead to a decrease in mental flourishing (dΨ &lt; 0).</p>
+        <p>This formulation is not intended as a universal truth but rather highlights a potential trade-off that can emerge in specific contexts. Such a negative relationship is likely to manifest when higher wages are strongly correlated with job characteristics detrimental to Ψ. Examples include:</p>
+        <ul>
+            <li>High-stress occupations that demand excessively long hours, leading to chronic stress and burnout.</li>
+            <li>Jobs with poor work-life balance, which erode the time available for rest, recovery, social connections, and health-promoting activities.</li>
+            <li>Work environments that are characterized by toxicity, lack of support, or high emotional labor, even if financially lucrative.</li>
+            <li>Situations where the intense pursuit of higher wages leads individuals to neglect their physical or mental health.</li>
+        </ul>
+        <p>This formulation synthesizes observations from various sources, including: discussions on how demanding work conditions, such as long hours and insufficient rest, can negatively impact mental health. The notion that economic activities and outcomes can themselves generate stress, which in turn influences decision-making and well-being. And findings from behavioral economics highlighting that individuals may prioritize short-term benefits (like higher immediate wages) over long-term goals, including sustained well-being. The expression dW/dΨ &lt; 0 describes a potential "dark side" to wage increases on flourishing.</p>
+
+        <h4>C. Reconciling with Traditional Utility Theory</h4>
+        <p>Traditional utility theory generally assumes that utility increases with consumption (dU/dC > 0), and since consumption (C) is largely financed by income derived from wages (W), it indirectly implies that utility increases with wages (dU/dW > 0), holding leisure constant. The formulation dW/dΨ &lt; 0 introduces a critical nuance. If an individual's overall utility (U<sub>total</sub>) is a function not only of consumption (C) and leisure (L) but also of their mental flourishing (Ψ), such that U<sub>total</sub> = f(C,L,Ψ), then the impact of a wage increase becomes more complex. Even if a higher W leads to higher C and thus increases the consumption component of utility (∂U<sub>total</sub>/∂C > 0), if that higher W is achieved through job conditions that negatively affect Ψ (i.e., dW/dΨ &lt; 0), the overall change in total utility (dU<sub>total</sub>/dW) could be ambiguous or even negative in certain ranges. This means a higher wage might enhance material well-being but diminish psychological well-being, with a net negative effect on an individual's comprehensive utility.</p>
+
+        <h4>D. Implications for Policy and Individual Choice</h4>
+        <p>This mathematical conceptualization carries significant implications:</p>
+        <ul>
+            <li>It underscores the critical importance of considering non-monetary attributes of jobs, such as work environment, stress levels, autonomy, and work-life balance, alongside pay levels when evaluating job quality and its impact on well-being.</li>
+            <li>It suggests that individuals might rationally choose lower-paying jobs if those jobs offer better prospects for mental flourishing (higher Ψ). Such choices, which might appear irrational under traditional models focused solely on income maximization for a given level of leisure, become understandable within a framework that values Ψ.</li>
+            <li>For policymakers, it implies that labor market policies should aim not merely for job creation or wage growth in isolation, but for the creation of "good jobs"—those that support or, at a minimum, do not systematically undermine the mental flourishing of the workforce.</li>
+        </ul>
+        <p>The relationship dW/dΨ &lt; 0 suggests that, in certain segments of the labor market, individuals may implicitly "pay" for higher wages with decrements in their mental well-being. The derivative dW/dΨ can be interpreted as the marginal rate of transformation between well-being and wages; if negative, it indicates a costly trade-off. While the formulation focuses on the impact of wage-associated conditions on Ψ, the relationship can be bidirectional. Poor mental flourishing (low Ψ) can also constrain an individual's earning potential (W), as demonstrated by the economic impacts of depression and ADHD. The formulation dW/dΨ &lt; 0 specifically isolates one direction of this complex interplay: how the characteristics often tied to achieving a higher wage can adversely affect Ψ. This necessitates a more holistic view of "compensation," where true compensation includes not only monetary earnings but also the net impact on an individual's mental flourishing. Brain Economics, a novel approach to individual and societal progress in the 21st century, proposes that prioritizing mental wellbeing of the population will unlock unprecedented economic growth. Furthermore, to fully capture the myriad benefits of such an approach, we agree with new approaches that evaluate economic progress beyond metrics like GDP or income growth by capturing variables that reflect population-level mental well-being and other relative metrics.</p>
+        
+        <!-- Key Mathematical Formulations Section -->
+        <div class="formula-section">
+            <h2 class="section-title">Key Mathematical Formulations</h2>
+            <div>
+                <h3>Expanded Utility Function:</h3>
+                <p class="formula">U(W, L, C, E, M, P)</p>
+                <p class="formula-description">Where C=Cognitive Capacity, E=Emotional Regulation, M=Motivation & Drive, P=Physical Vitality</p>
+
+                <h3>Stress and Leisure (Performance Relationship):</h3>
+                <p class="formula">If dY/dStress > 0 then dL/dStress &lt; 0</p>
+                <p class="formula-description">(Performance increasing with stress)</p>
+                <p class="formula">If dY/dStress &lt; 0 then dL/dStress > 0</p>
+                <p class="formula-description"> (Performance decreasing with stress)<br>Where Y is performance, L is leisure.</p>
+
+                <h3>Depression and Work Utility:</h3>
+                <p class="formula">W(Ψ)</p>
+                <p class="formula-description mb-1">Wage as a function of Depression Severity (Ψ).</p>
+                <p class="formula">dW/dΨ &lt; 0</p>
+                <p class="formula-description">Interpreted as: as depression (Ψ) worsens, the marginal utility of work/wage (W) declines.</p>
+                
+                <h3>Wellness and Wage Trade-off:</h3>
+                <p class="formula">dW/dΨ &lt; 0</p>
+                <p class="formula-description">Interpreted as: under specific conditions, an increase in wage rate (W) is associated with conditions that can lead to a decrease in mental flourishing (Ψ).</p>
+                <p class="formula-note">(Note: The original report text and its summary list for dW/dΨ &lt; 0 vs dΨ/dW &lt; 0 have a slight variation in which variable is in the numerator for the stated interpretation. This version aligns with the formula list in the source document/report.)</p>
+            </div>
+        </div>
+
+        <h2>Synthesis: Towards a Neuro-Economic Model of Work, Leisure, and Flourishing</h2>
+        <h4>A. Recapitulation: The Multifaceted Impact of Wellness on Work-Leisure Choices</h4>
+        <p>The preceding analysis has demonstrated that mental wellness factors profoundly and distinctly modulate the traditional work-leisure dynamic. Stress can reshape the utility derived from leisure, leading to a U-shaped marginal utility response where leisure becomes increasingly valuable for recovery beyond a certain threshold, primarily by impacting Emotional Regulation and Cognitive Capacity. Depression tends to attenuate the utility derived from work, primarily through anhedonia and cognitive impairments, and can similarly reduce the enjoyment of leisure, by diminishing Motivation & Drive, impairing Emotional Regulation, and compromising Cognitive Capacity. ADHD introduces an oscillating pattern to work utility, with periods of intense hyperfocus and high satisfaction alternating with periods of distraction, low utility, and potential frustration, all interacting with a typically constant wage, primarily by affecting Cognitive Capacity. These are not isolated phenomena; they interact within an individual's decision-making framework, influencing choices about labor participation, work hours, effort, and the pursuit of leisure.</p>
+
+        <h4>B. The Shortcomings of a "One-Size-Fits-All" Economic Model</h4>
+        <p>The traditional economic model of work-leisure choice, while foundational, lacks the necessary granularity to fully explain or predict behavior when significant wellness factors are at play. The core assumptions of homogenous, perfectly rational actors with stable and universally defined preferences are challenged by the empirical evidence of how stress, depression, and ADHD systematically alter perceptions, motivations, and capacities. A model that does not account for these internal states will inevitably fall short in its explanatory power and in its utility for guiding policy.</p>
+
+        <h4>C. Elements of a Neuro-Economic Model</h4>
+        <p>A more comprehensive neuro-economic model of work, leisure, and flourishing would need to incorporate several key elements:</p>
+        <ul>
+            <li><strong>State-Dependent Utility:</strong> Utility functions, U(C,L), must be explicitly conditioned on relevant psychological states (Ψ<sub>i</sub>, where i could represent levels across the Cognitive Capacity (C), Emotional Regulation (E), Motivation & Drive (M), and Physical Vitality (P) domains). Thus, the utility function becomes U = U(W,L | C,E,M,P). This acknowledges that the satisfaction derived from consumption and leisure is not fixed but varies with an individual's mental state.</li>
+            <li><strong>Heterogeneity:</strong> The model must acknowledge and incorporate individual differences in baseline psychological traits, susceptibility to mental health conditions, and responses to various economic and environmental stimuli.</li>
+            <li><strong>Dynamic Feedbacks:</strong> It is crucial to recognize that work-leisure choices have consequences for future wellness (as measured by C,E,M,P), and conversely, an individual's state of wellness influences their future work-leisure decisions and productivity. For example, prolonged overwork (low leisure) might elevate stress levels (decreasing E and C), which in turn alters the future perceived utility of leisure and work. These dynamic feedback loops are central to understanding long-term behavior and well-being.</li>
+            <li><strong>Cognitive Effort and Costs:</strong> The model should account for the cognitive costs associated with managing wellness conditions while engaging in work or leisure. For instance, the effort required to maintain focus with ADHD, or to overcome anhedonia and engage in tasks when depressed, represents real economic costs borne by the individual and employer, effectively reducing the net utility of those activities.</li>
+        </ul>
+
+        <h4>D. In-depth Elaboration, Multi-layered Insights, and Recommendations</h4>
+        <p>The integration of wellness into economic models of work and leisure yields actionable insights for various stakeholders:</p>
+        <p><strong>For Individuals:</strong></p>
+        <ul>
+            <li>Cultivating greater self-awareness regarding how their unique mental states and wellness levels affect their preferences for work versus leisure, their productivity patterns, and their overall satisfaction is crucial.</li>
+            <li>Developing and implementing proactive strategies for managing mental wellness is essential. This includes engaging in high-quality leisure for stress recovery, seeking timely and appropriate treatment for conditions like depression, and employing effective coping mechanisms and environmental structuring for ADHD.</li>
+            <li>Making career and job choices that align not only with financial aspirations but also with psychological needs and predispositions becomes a rational strategy. This might involve consciously valuing jobs that enhance or protect mental flourishing (Ψ) even if they offer marginally lower wages (W), a decision supported by the logic of dW/dΨ &lt; 0 in certain contexts. A relevant framework for how to adequately consider these distinct categories when planning one’s life is lifestyle centric planning.</li>
+        </ul>
+        <p><strong>For Organizations:</strong></p>
+        <ul>
+            <li>Designing "brain-friendly" work environments and job roles is paramount. This involves managing workloads to prevent chronic stress, fostering supportive and psychologically safe cultures, actively working to reduce stigma associated with mental health challenges, and offering flexibility in work arrangements where feasible.</li>
+            <li>Providing accessible resources for mental health support, including Employee Assistance Programs (EAPs), comprehensive health coverage for mental health services, and reasonable accommodations for employees with diagnosed conditions, is a key responsibility.</li>
+            <li>Recognizing that investments in employee wellness are not merely costs but can be significant investments in human capital, leading to improved productivity, creativity, engagement, and retention, and reduced costs associated with absenteeism and presenteeism. The economic toll of poor mental health in the workplace, through lost productivity and increased turnover, is substantial.</li>
+        </ul>
+        <p><strong>For Policymakers:</strong></p>
+        <ul>
+            <li>Labor market policies should be broadened to integrate mental health considerations explicitly. This includes promoting working conditions that are conducive to mental well-being and ensuring protections against workplace stressors that undermine it.</li>
+            <li>Supporting public health initiatives aimed at enhancing population-level mental flourishing can have positive spillover effects on economic productivity and participation.</li>
+            <li>Investing in further research into the economic impacts of mental wellness, the efficacy of various workplace and clinical interventions, and the development of more sophisticated neuro-economic models is vital.</li>
+            <li>Consideration should be given to supplementing traditional economic indicators like GDP with broader metrics that capture societal well-being, including measures of population mental health and flourishing (Ψ).</li>
+        </ul>
+        <p>The pursuit of maximal output by organizations without due regard for employee wellness can lead to a productivity paradox. While such strategies might yield short-term gains in output, they often result in long-term productivity losses due to employee burnout, increased error rates, higher turnover, and a decline in innovation and engagement. For example, unresolved depression is estimated to account for a 35% reduction in individual productivity, and the overall workforce productivity loss from ADHD is estimated to be between $67 billion and $116 billion annually in the U.S. This paradox arises because the intensive pursuit of productivity, if it systematically undermines employee wellness, ultimately becomes counter-productive to sustained economic success.</p>
+        <p>This perspective also calls for a redefinition of "human capital." Traditional human capital theory emphasizes education, skills, and experience. Brain Economics compellingly argues that mental flourishing (Ψ) is a critical, perhaps foundational, component of human capital. Acquired skills and knowledge cannot be optimally deployed if an individual's underlying mental wellness is compromised. The human capital framework has indeed been used to analyze the economic impact of conditions like ADHD, highlighting how they can affect educational attainment and subsequent earnings.</p>
+        <p>Ultimately, this integrated neuro-economic approach advocates for a fundamental shift from reactive to proactive wellness strategies. Current systems in many societies and organizations tend to react to mental health crises after they have emerged. A more economically sound and ethically responsible approach involves implementing proactive, preventative strategies at individual, organizational, and societal levels, reflecting an emphasis on our shared humanity. Recognizing that maintaining and enhancing high levels of mental flourishing (Ψ) is economically efficient in the long run should guide future policy and practice.</p>
+        
+        <p>To provide a concise overview of the distinct impacts discussed, the following table summarizes how each wellness factor reshapes the traditional work-leisure dynamic by affecting the broader domains:</p>
+        
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Wellness Factor</th>
+                        <th>Primary Impact on Cognitive Capacity (C)</th>
+                        <th>Primary Impact on Emotional Regulation (E)</th>
+                        <th>Primary Impact on Motivation & Drive (M)</th>
+                        <th>Primary Impact on Physical Vitality (P)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Stress</td>
+                        <td>Diminished focus, impaired memory/decision-making.</td>
+                        <td>Heightened anxiety, irritability, reduced resilience.</td>
+                        <td>Can initially boost, then severely deplete.</td>
+                        <td>Depleted energy, physical exhaustion.</td>
+                    </tr>
+                    <tr>
+                        <td>Depression</td>
+                        <td>Compromised concentration, decision-making, memory.</td>
+                        <td>Persistent sadness, anhedonia, hopelessness.</td>
+                        <td>Significant reduction in drive, initiative.</td>
+                        <td>Fatigue, sleep disturbances.</td>
+                    </tr>
+                    <tr>
+                        <td>ADHD</td>
+                        <td>Impaired attention, focus, executive functions.</td>
+                        <td>Emotional dysregulation (indirect).</td>
+                        <td>Frustration, inconsistent engagement.</td>
+                        <td>Indirect (e.g., from sleep issues).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <script>
+        // Chart.js Global Defaults
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.font.color = '#000000'; // Default font color for all chart text
+        Chart.defaults.plugins.legend.labels.color = '#000000'; // Legend text color
+
+        // Function to create the Traditional Work-Leisure Chart (Marginal Benefits)
+        function createMarginalBenefitChart() {
+            const ctx = document.getElementById('marginalBenefitChart').getContext('2d');
+            const hours = Array.from({ length: 17 }, (_, i) => i); 
+            const wage = 15; 
+            const marginalWage = hours.map(() => wage);
+            const marginalLeisure = hours.map(h => 0.12 * Math.pow(h, 2) + 5);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: hours,
+                    datasets: [
+                        {
+                            label: 'Marginal Benefit of Work (Wage)',
+                            data: marginalWage,
+                            borderColor: 'rgb(75, 192, 192)', 
+                            tension: 0.1,
+                            pointRadius: 2,
+                            borderWidth: 2,
+                        },
+                        {
+                            label: 'Marginal Benefit of Leisure (Rest)',
+                            data: marginalLeisure,
+                            borderColor: 'rgb(255, 99, 132)', 
+                            tension: 0.4,
+                            pointRadius: 2,
+                            borderWidth: 2,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { // Added layout padding
+                        padding: {
+                            top: 5,
+                            right: 15,
+                            bottom: 5,
+                            left: 10
+                        }
+                    },
+                    plugins: {
+                        title: { display: false },
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                color: '#000000', 
+                                font: { size: 12 },
+                                padding: 10 // Added padding to legend labels
+                            } 
+                        },
+                    },
+                    scales: {
+                        x: { 
+                            title: { 
+                                display: true, 
+                                text: 'Hours Worked', 
+                                color: '#000000', 
+                                font: { size: 14, weight: 'bold' },
+                                padding: { top: 10, bottom: 0 } // Padding for axis title
+                            },
+                            ticks: { color: '#000000' }, 
+                            grid: { display: false } 
+                        },
+                        y: { 
+                            title: { 
+                                display: true, 
+                                text: 'Marginal Benefit', 
+                                color: '#000000', 
+                                font: { size: 14, weight: 'bold' },
+                                padding: { top: 0, bottom: 10 } // Padding for axis title
+                            }, 
+                            beginAtZero: true, 
+                            max: 40,
+                            ticks: { color: '#000000' }, 
+                            grid: { display: false } 
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to create the Work-Leisure Budget Constraints by Income Level
+        function createBudgetConstraintChart() {
+            const ctx = document.getElementById('budgetConstraintChart').getContext('2d');
+            const totalHours = 24;
+            const leisureHours = Array.from({ length: totalHours + 1 }, (_, i) => i);
+            const incomeLevels = [
+                { label: 'Below Poverty Line (W: $7, V: $0)', wage: 7, nonLaborIncome: 0, borderColor: 'rgb(220, 38, 38)', },
+                { label: 'Middle Class (W: $25, V: $50)', wage: 25, nonLaborIncome: 50, borderColor: 'rgb(75, 192, 192)', },
+                { label: 'Highly Wealthy (W: $70, V: $100)', wage: 70, nonLaborIncome: 100, borderColor: 'rgb(34, 139, 34)', }
+            ];
+            const datasets = incomeLevels.map(level => {
+                const income = leisureHours.map(l => Math.max(0, level.wage * (totalHours - l) + level.nonLaborIncome));
+                return { label: level.label, data: income, borderColor: level.borderColor, tension: 0, pointRadius: 0, borderWidth: 2, fill: false, };
+            });
+
+            new Chart(ctx, {
+                type: 'line', data: { labels: leisureHours, datasets: datasets },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    layout: {
+                        padding: { top: 5, right: 15, bottom: 5, left: 10 }
+                    },
+                    plugins: { 
+                        title: { display: false }, 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                color: '#000000', 
+                                font: { size: 11 }, // Slightly smaller font for long labels
+                                padding: 10,
+                                boxWidth: 15 // Adjust box width if needed
+                            } 
+                        } 
+                    },
+                    scales: {
+                        x: { 
+                            title: { 
+                                display: true, 
+                                text: 'Leisure Hours per Day', 
+                                color: '#000000', 
+                                font: { size: 14, weight: 'bold' },
+                                padding: { top: 10, bottom: 0 }
+                            }, 
+                            min: 0, 
+                            max: totalHours, 
+                            ticks: { stepSize: 2, color: '#000000' }, 
+                            grid: { display: false } 
+                        },
+                        y: { 
+                            title: { 
+                                display: true, 
+                                text: 'Income per Day ($)', 
+                                color: '#000000', 
+                                font: { size: 14, weight: 'bold' },
+                                padding: { top: 0, bottom: 10 } 
+                            }, 
+                            beginAtZero: true, 
+                            max: 1800,
+                            ticks: { color: '#000000' }, 
+                            grid: { display: false } 
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to create the Stress-Leisure Utility Chart (U-shaped)
+        function createStressLeisureChart() {
+            const ctx = document.getElementById('stressLeisureChart').getContext('2d');
+            const stressLevels = Array.from({ length: 11 }, (_, i) => i); 
+            const leisureUtility = stressLevels.map(s => {
+                let utility;
+                if (s <= 3) { utility = 0.5 * Math.pow(s - 3, 2) + 20; } 
+                else { utility = 2.5 * Math.pow(s - 3, 2) + 20; }
+                return Math.min(utility, 100);
+            });
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: stressLevels,
+                    datasets: [{ label: 'Utility of Leisure', data: leisureUtility, borderColor: 'rgb(128, 0, 128)', tension: 0.4, pointRadius: 2, borderWidth: 2, fill: false, }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    layout: {
+                        padding: { top: 5, right: 15, bottom: 5, left: 10 }
+                    },
+                    plugins: { 
+                        title: { display: false }, 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                color: '#000000', 
+                                font: { size: 12 },
+                                padding: 10 
+                            } 
+                        } 
+                    },
+                    scales: {
+                        x: { 
+                            title: { 
+                                display: true, 
+                                text: 'Level of Stress', 
+                                color: '#000000', 
+                                font: { size: 14, weight: 'bold' },
+                                padding: { top: 10, bottom: 0 } 
+                            },
+                            ticks: { color: '#000000' }, 
+                            grid: { display: false } 
+                        },
+                        y: { 
+                            title: { 
+                                display: true, 
+                                text: 'Utility of Leisure', 
+                                color: '#000000', 
+                                font: { size: 14, weight: 'bold' },
+                                padding: { top: 0, bottom: 10 } 
+                            }, 
+                            beginAtZero: false, 
+                            max:100,
+                            ticks: { color: '#000000' }, 
+                            grid: { display: false } 
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to create the Depression-Work Utility Chart
+        function createDepressionWorkChart() {
+            const ctx = document.getElementById('depressionWorkChart').getContext('2d');
+            const depressionSeverity = Array.from({ length: 11 }, (_, i) => i);
+            const workUtility = depressionSeverity.map(psi => Math.max(0, -4 * psi + 45));
+            const constantWageUtility = depressionSeverity.map(() => 25);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: depressionSeverity,
+                    datasets: [
+                        { label: 'MU of Work (Depression)', data: workUtility, borderColor: 'rgb(139, 0, 0)', tension: 0.2, pointRadius: 2, borderWidth: 2, fill: false, },
+                        { label: 'Constant Wage Utility', data: constantWageUtility, borderColor: 'rgb(70, 130, 180)', borderDash: [5, 5], tension: 0, pointRadius: 0, borderWidth: 2, fill: false, }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    layout: {
+                        padding: { top: 5, right: 15, bottom: 5, left: 10 }
+                    },
+                    plugins: { 
+                        title: { display: false }, 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                color: '#000000', 
+                                font: { size: 12 },
+                                padding: 10 
+                            } 
+                        } 
+                    },
+                    scales: {
+                        x: { 
+                            title: { 
+                                display: true, 
+                                text: 'Severity of Depression (Ψ)', 
+                                color: '#000000', 
+                                font: { size: 14, weight: 'bold' },
+                                padding: { top: 10, bottom: 0 } 
+                            },
+                            ticks: { color: '#000000' }, 
+                            grid: { display: false } 
+                        },
+                        y: { 
+                            title: { 
+                                display: true, 
+                                text: 'Marginal Utility of Work', 
+                                color: '#000000', 
+                                font: { size: 14, weight: 'bold' },
+                                padding: { top: 0, bottom: 10 } 
+                            }, 
+                            beginAtZero: true, 
+                            max: 50,
+                            ticks: { color: '#000000' }, 
+                            grid: { display: false } 
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to create the ADHD-Work Utility Chart
+        function createAdhdWorkChart() {
+            const ctx = document.getElementById('adhdWorkChart').getContext('2d');
+            const taskProgression = Array.from({ length: 101 }, (_, i) => i);
+            const adhdUtility = taskProgression.map(t => 45 * Math.sin(0.1 * t) + 35 );
+            const constantWageUtility = taskProgression.map(() => 30);
+            const frustrationThreshold = taskProgression.map(() => -10);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: taskProgression,
+                    datasets: [
+                        { label: 'MU of Work (ADHD)', data: adhdUtility, borderColor: 'rgb(255, 165, 0)', tension: 0.4, pointRadius: 1, borderWidth: 2, fill: false, },
+                        { label: 'Constant Wage Utility', data: constantWageUtility, borderColor: 'rgb(70, 130, 180)', borderDash: [5, 5], tension: 0, pointRadius: 0, borderWidth: 2, fill: false, },
+                        { label: 'Frustration Threshold', data: frustrationThreshold, borderColor: 'rgb(255, 0, 0)', borderDash: [3, 3], tension: 0, pointRadius: 0, borderWidth: 2, fill: false, }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    layout: {
+                        padding: { top: 5, right: 5, bottom: 5, left: 5 } // Reduced padding for this denser chart
+                    },
+                    plugins: { 
+                        title: { display: false }, 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                color: '#000000', 
+                                font: { size: 11 }, // Slightly smaller font
+                                padding: 10
+                            } 
+                        } 
+                    },
+                    scales: {
+                        x: { 
+                            title: { 
+                                display: true, 
+                                text: 'Time / Task Progression', 
+                                color: '#000000', 
+                                font: { size: 14, weight: 'bold' },
+                                padding: { top: 10, bottom: 0 } 
+                            },
+                            ticks: { 
+                                color: '#000000',
+                                autoSkipPadding: 15 // Increase padding for auto skip
+                            }, 
+                            grid: { display: false } 
+                        },
+                        y: { 
+                            title: { 
+                                display: true, 
+                                text: 'Marginal Utility', 
+                                color: '#000000', 
+                                font: { size: 14, weight: 'bold' },
+                                padding: { top: 0, bottom: 10 } 
+                            }, 
+                            min: -20, 
+                            max: 100,
+                            ticks: { color: '#000000' }, 
+                            grid: { display: false } 
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize all charts on window load
+        window.onload = function() {
+            if(document.getElementById('marginalBenefitChart')) createMarginalBenefitChart();
+            if(document.getElementById('budgetConstraintChart')) createBudgetConstraintChart();
+            if(document.getElementById('stressLeisureChart')) createStressLeisureChart();
+            if(document.getElementById('depressionWorkChart')) createDepressionWorkChart();
+            if(document.getElementById('adhdWorkChart')) createAdhdWorkChart();
+        };
+    </script>
+</body>
+</html>
